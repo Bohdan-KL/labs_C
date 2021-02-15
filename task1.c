@@ -17,54 +17,55 @@ void make_title() {
 }
 
 
-double double_valid_input(char text[1000]) {
-    double db;
+unsigned int is_valid_input(int max_value, int is_int, char text[1000]) {
+    unsigned int value;
     char expression;
     printf(text);
-    while (!scanf("%lf%c", &db, &expression) || expression != '\n' || db < 100 || db >= 1000) {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes (for example - 372.2): ");
-        fflush(stdin);
+    if (is_int == 1) {
+        while (!scanf("%d%c", &value, &expression) || expression != '\n' || value >= max_value || value < 0) {
+            rewind(stdin);
+            printf("Error! Please, write without mistakes (0-%d): ", max_value - 1);
+            fflush(stdin);
+        }
     }
-    return db;
+    if (is_int == 0) {
+        while (!scanf("%x%c", &value, &expression) || expression != '\n' || value<0 || value>0xFFFF) {
+            rewind(stdin);
+            printf("Error! Please, write without mistakes: ");
+            fflush(stdin);
+        }
+    }
+    return value;
 }
 
-void ten_percent() {
-    double number;
-    number = double_valid_input("Write the number(100-999): ");
-    printf("10%% of the number is: %lf\n", number * 0.1);
+void packaging() {
+    unsigned int O, C, D, N, UnitStateWord;
+
+    O = is_valid_input(32, 1, "Write operation code(0-31): ");
+    C = is_valid_input(2, 1, "Write command chain sign(0-1): ");
+    D = is_valid_input(2, 1, "Write data chain sign(0-1): ");
+    N = is_valid_input(512, 1, "Write number of bytes for transmissions(0-511): ");
+
+    UnitStateWord = (O & 0x1F) << 11;
+    UnitStateWord |= ((unsigned char) C & 1) << 10;
+    UnitStateWord |= ((unsigned char) D & 1) << 9;
+    UnitStateWord |= N & 0x1FF;
+    printf("\nDevice status word: %04x\n", UnitStateWord);
     printf(">---------------------------------------------------------------<\n");
 }
 
 
-long long long_long_valid_input(char text[1000]) {
-    long long number;
-    char expression;
-    printf(text);
-    while (!scanf("%lld%c", &number, &expression) || expression != '\n') {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes: ");
-        fflush(stdin);
-    }
-    return number;
-}
-
-void second_function() {
-    long long a1, a2, a3, a4, a5, b1, b2, b3, b4, b5;
-
-    a1 = long_long_valid_input("Write a1: ");
-    a2 = long_long_valid_input("Write a2: ");
-    a3 = long_long_valid_input("Write a3: ");
-    a4 = long_long_valid_input("Write a4: ");
-    a5 = long_long_valid_input("Write a5: ");
-
-    b1 = long_long_valid_input("Write b1: ");
-    b2 = long_long_valid_input("Write b2: ");
-    b3 = long_long_valid_input("Write b3: ");
-    b4 = long_long_valid_input("Write b4: ");
-    b5 = long_long_valid_input("Write b5: ");
-    printf("The value of the a1*b1+a2*b2+a3*b3+a4*b4+a5*b5 is: %lld\n",
-           a1 * b1 + a2 * b2 + a3 * b3 + a4 * b4 + a5 * b5);
+void unpackaging() {
+    unsigned int O, C, D, N, UnitStateWord;
+    UnitStateWord = is_valid_input(0, 0, "Write status code: ");
+    O = (UnitStateWord >> 11) & 0x1F;
+    C = (UnitStateWord >>  10) & 1;
+    D = (UnitStateWord >>  9) & 1;
+    N = UnitStateWord & 0x1FF;
+    printf("\nOperation code is: %d\n",O);
+    printf("Command chain sign is: %d\n",C);
+    printf("Data chain sign is: %d\n",D);
+    printf("Number of bytes for transmissions is: %d\n",N);
     printf(">---------------------------------------------------------------<\n");
 
 }
@@ -115,15 +116,14 @@ int main() {
         Sleep(4000);
     }
     if (reaction == 1) {
-        ten_percent();
+        packaging();
         continue_or_quit();
         goto starting_menu;
     }
     if (reaction == 2) {
-        second_function();
+        unpackaging();
         continue_or_quit();
         goto starting_menu;
     }
     return 0;
 }
-
