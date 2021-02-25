@@ -5,9 +5,9 @@
 void make_title() {
     system("cls||clear");
     printf("\n┌────────────────────────────────────────────────────────────────────────────────────────────────┐");
-    printf("\n│                                    Laboratory work №1                                          │");
+    printf("\n│                                    Laboratory work №2                                          │");
     printf("\n│                                                                                                │");
-    printf("\n│ Theme: 'Base type of data, input-output, operations with bits, operations of bit shifting'     │");
+    printf("\n│ Theme: 'One-dimensional and two-dimensional arrays'                                            │");
     printf("\n│                                                                                                │");
     printf("\n│      Done by st. of gr. КМ-01                                         Klots B                  │");
     printf("\n│                                                                                                │");
@@ -38,24 +38,29 @@ unsigned int is_valid_input(int max_value, int is_int, char text[1000]) {
     return value;
 }
 
-void packaging() {
-    unsigned int O, C, D, N, UnitStateWord;
 
-    O = is_valid_input(32, 1, "Write operation code(0-31): ");
-    C = is_valid_input(2, 1, "Write command chain sign(0-1): ");
-    D = is_valid_input(2, 1, "Write data chain sign(0-1): ");
-    N = is_valid_input(512, 1, "Write number of bytes for transmissions(0-511): ");
+unsigned int is_valid_dimensionality() {
+    unsigned int dimensionality;
+    char expression;
+    printf("Write array dimensionality: ");
+    while (!scanf("%d%c", &dimensionality, &expression) || expression != '\n' || dimensionality < 0 || dimensionality > 10000) {
+        rewind(stdin);
+        printf("Error! Dimensionality should be from 1 to 10000\n");
+        printf("Please, write without mistakes: ");
+        fflush(stdin);
+    }
+    return dimensionality;
+}
 
-    UnitStateWord = (O & 0x1F) << 11;
-    UnitStateWord |= ((unsigned char) C & 1) << 10;
-    UnitStateWord |= ((unsigned char) D & 1) << 9;
-    UnitStateWord |= N & 0x1FF;
-    printf("\nDevice status word: %04x\n", UnitStateWord);
-    printf(">---------------------------------------------------------------<\n");
+void counting() {
+    unsigned int size;
+    size = is_valid_dimensionality();
+    printf("%d",size);
+    printf("\n>---------------------------------------------------------------<\n");
 }
 
 
-void unpackaging() {
+void sorting() {
     unsigned int O, C, D, N, UnitStateWord;
     UnitStateWord = is_valid_input(0, 0, "Write status code: ");
     O = (UnitStateWord >> 11) & 0x1F;
@@ -116,12 +121,12 @@ int main() {
         Sleep(4000);
     }
     if (reaction == 1) {
-        packaging();
+        counting();
         continue_or_quit();
         goto starting_menu;
     }
     if (reaction == 2) {
-        unpackaging();
+        sorting();
         continue_or_quit();
         goto starting_menu;
     }
