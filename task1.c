@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <time.h>
 
 void make_title() {
     system("cls||clear");
@@ -17,24 +18,16 @@ void make_title() {
 }
 
 
-unsigned int is_valid_input(int max_value, int is_int, char text[1000]) {
-    unsigned int value;
+double is_valid_input(char text[1000]) {
+    double value;
     char expression;
     printf(text);
-    if (is_int == 1) {
-        while (!scanf("%d%c", &value, &expression) || expression != '\n' || value >= max_value || value < 0) {
-            rewind(stdin);
-            printf("Error! Please, write without mistakes (0-%d): ", max_value - 1);
-            fflush(stdin);
-        }
+    while (!scanf("%lf%c", &value, &expression) || expression != '\n') {
+        rewind(stdin);
+        printf("Error! Please, write without mistakes: ");
+        fflush(stdin);
     }
-    if (is_int == 0) {
-        while (!scanf("%x%c", &value, &expression) || expression != '\n' || value<0 || value>0xFFFF) {
-            rewind(stdin);
-            printf("Error! Please, write without mistakes: ");
-            fflush(stdin);
-        }
-    }
+
     return value;
 }
 
@@ -43,7 +36,8 @@ unsigned int is_valid_dimensionality() {
     unsigned int dimensionality;
     char expression;
     printf("Write array dimensionality: ");
-    while (!scanf("%d%c", &dimensionality, &expression) || expression != '\n' || dimensionality < 0 || dimensionality > 10000) {
+    while (!scanf("%d%c", &dimensionality, &expression) || expression != '\n' || dimensionality < 0 ||
+           dimensionality > 10000) {
         rewind(stdin);
         printf("Error! Dimensionality should be from 1 to 10000\n");
         printf("Please, write without mistakes: ");
@@ -52,25 +46,57 @@ unsigned int is_valid_dimensionality() {
     return dimensionality;
 }
 
+int is_keyboard() {
+    char expression;
+    int reaction;
+    printf("Create array(1 - from keyboard, 0 - auto): ");
+    while (!scanf("%d%c", &reaction, &expression) || expression != '\n' || (reaction != 0 && reaction != 1)) {
+        rewind(stdin);
+        printf("Error! Please, write without mistakes(1 - from keyboard, 0 - auto): ");
+        fflush(stdin);
+    }
+    return reaction;
+}
+
+
 void counting() {
-    unsigned int size;
-    size = is_valid_dimensionality();
-    printf("%d",size);
+    unsigned int n, result = 0, pre_result = 0;
+    int how_create_array, i;
+    double A[10005];
+    srand(time(NULL));
+    n = is_valid_dimensionality();
+    how_create_array = is_keyboard();
+    if (how_create_array == 1) {
+        for (i = 0; i < n; i++)
+            A[i] = is_valid_input("Write numeric: ");
+    }
+    if (how_create_array == 0) {
+        for (i = 0; i < n - 1; i++)
+            A[i] = (rand() % 1001 - 500) / 10.0;
+        printf("Generated array: ");
+        for (i = 0; i < n - 1; i++)
+            printf("%f, ", A[i]);
+        A[n - 1] = (rand() % 1001 - 500) / 10.0;
+        printf("%f.\n", A[i]);
+    }
+
+    for (i = 0; i < n; i++) {
+        if (A[i] < 0) pre_result += 1;
+        if (A[i] >= 0 & pre_result != 0) {
+            if (pre_result > result)
+                result = pre_result;
+            pre_result = 0;
+        }
+    }
+
+
+    printf("\nThe maximum number of negative consecutive elements is: %d", result);
     printf("\n>---------------------------------------------------------------<\n");
 }
 
 
 void sorting() {
-    unsigned int O, C, D, N, UnitStateWord;
-    UnitStateWord = is_valid_input(0, 0, "Write status code: ");
-    O = (UnitStateWord >> 11) & 0x1F;
-    C = (UnitStateWord >>  10) & 1;
-    D = (UnitStateWord >>  9) & 1;
-    N = UnitStateWord & 0x1FF;
-    printf("\nOperation code is: %d\n",O);
-    printf("Command chain sign is: %d\n",C);
-    printf("Data chain sign is: %d\n",D);
-    printf("Number of bytes for transmissions is: %d\n",N);
+
     printf(">---------------------------------------------------------------<\n");
 
 }
