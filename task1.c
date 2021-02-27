@@ -19,23 +19,12 @@ void make_title() {
 }
 
 
-double is_double_valid_input(char text[1000]) {
+double is_double_valid_input(char text[1000], char which_matrix[1000], int i, int j) {
     double value;
     char expression;
-    printf(text);
-    while (!scanf("%lf%c", &value, &expression) || expression != '\n') {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes: ");
-        fflush(stdin);
-    }
-    return value;
-}
+    printf("%s%s[%d][%d]: ", text, which_matrix, i + 1, j + 1);
 
-long long is_long_long_valid_input(char text[1000]) {
-    long long value;
-    char expression;
-    printf(text);
-    while (!scanf("%lld%c", &value, &expression) || expression != '\n') {
+    while (!scanf("%lf%c", &value, &expression) || expression != '\n') {
         rewind(stdin);
         printf("Error! Please, write without mistakes: ");
         fflush(stdin);
@@ -47,21 +36,21 @@ long long is_long_long_valid_input(char text[1000]) {
 unsigned int is_valid_dimensionality() {
     unsigned int dimensionality;
     char expression;
-    printf("Write array dimensionality: ");
+    printf("Write matrix dimensionality: ");
     while (!scanf("%d%c", &dimensionality, &expression) || expression != '\n' || dimensionality < 0 ||
-           dimensionality > 10000) {
+           dimensionality > 150) {
         rewind(stdin);
-        printf("Error! Dimensionality should be from 1 to 10000\n");
+        printf("Error! Dimensionality should be from 1 to 150\n");
         printf("Please, write without mistakes: ");
         fflush(stdin);
     }
     return dimensionality;
 }
 
-int is_keyboard() {
+int is_keyboard(char which_matrix[1000]) {
     char expression;
     int reaction;
-    printf("Create array(1 - from keyboard, 0 - auto): ");
+    printf("Create matrix %s (1 - from keyboard, 0 - auto): ", which_matrix);
     while (!scanf("%d%c", &reaction, &expression) || expression != '\n' || (reaction != 0 && reaction != 1)) {
         rewind(stdin);
         printf("Error! Please, write without mistakes(1 - from keyboard, 0 - auto): ");
@@ -71,80 +60,87 @@ int is_keyboard() {
 }
 
 
-void counting() {
-    unsigned int n, result = 0, pre_result = 0;
-    int how_create_array, i;
-    double A[10005];
+void counting_matrix() {
+    unsigned int n;
+    int how_create_matrix, i, j, k;
+    double AB, BA;
+    double A[150][150], B[150][150], RESULT[150][150];
     srand(time(NULL));
     n = is_valid_dimensionality();
-    how_create_array = is_keyboard();
-    if (how_create_array == 1) {
+
+    /// creating matrix A
+    how_create_matrix = is_keyboard("A");
+    if (how_create_matrix == 1) {
         for (i = 0; i < n; i++)
-            A[i] = is_double_valid_input("Write numeric: ");
+            for (j = 0; j < n; j++)
+                A[i][j] = is_double_valid_input("Write numeric for ", "A", i, j);
+        printf("\nMatrix A:\n");
     }
-    if (how_create_array == 0) {
-        for (i = 0; i < n - 1; i++)
-            A[i] = (rand() % 1001 - 500) / 10.0;
-        printf("Generated array: ");
-        for (i = 0; i < n - 1; i++)
-            printf("%f, ", A[i]);
-        A[n - 1] = (rand() % 1001 - 500) / 10.0;
-        printf("%f.\n", A[i]);
+    if (how_create_matrix == 0) {
+        for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                A[i][j] = (rand() % 1001 - 500) / 10.0;
+
+        printf("\nGenerated matrix A:\n");
     }
 
     for (i = 0; i < n; i++) {
-        if (A[i] < 0) pre_result += 1;
-        if (A[i] >= 0 & pre_result != 0) {
-            if (pre_result > result)
-                result = pre_result;
-            pre_result = 0;
-        }
+        for (j = 0; j < n; j++)
+            printf("%lf ", A[i][j]);
+        printf("\n");
     }
+    printf("\n");
+    /// the end of creating matrix A
 
 
-    printf("\nThe maximum number of negative consecutive elements is: %d", result);
-    printf("\n>---------------------------------------------------------------<\n");
-}
-
-
-void sorting() {
-    long long how_create_array, n, i, j, step, value, A[10005];
-
-    n = is_valid_dimensionality();
-    how_create_array = is_keyboard();
-    if (how_create_array == 1) {
+    /// creating matrix B
+    how_create_matrix = is_keyboard("B");
+    if (how_create_matrix == 1) {
         for (i = 0; i < n; i++)
-            A[i] = is_long_long_valid_input("Write numeric: ");
+            for (j = 0; j < n; j++)
+                B[i][j] = is_double_valid_input("Write numeric for ", "B", i, j);
+        printf("\nMatrix B:\n");
     }
-    if (how_create_array == 0) {
-        for (i = 0; i < n - 1; i++)
-            A[i] = (rand() % 101 - 50);
-        printf("Generated array: ");
-        for (i = 0; i < n - 1; i++)
-            printf("%lld, ", A[i]);
-        A[n - 1] = (rand() % 101 - 50);
-        printf("%lld.\n", A[n-1]);
-    }
+    if (how_create_matrix == 0) {
+        for (i = 0; i < n; i++)
+            for (j = 0; j < n; j++)
+                B[i][j] = (rand() % 1001 - 500) / 10.0;
 
-    for (step = n / 2; step > 0; step /= 2)
-        for (i = step; i < n; i++) {
-            value = A[i];
-            for (j = i; j >= step; j -= step) {
-                if (value < A[j - step])
-                    A[j] = A[j - step];
-                else
-                    break;
+        printf("\nGenerated matrix B:\n");
+    }
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++)
+            printf("%lf ", B[i][j]);
+        printf("\n");
+    }
+    printf("\n");
+    /// the end of creating matrix B
+
+
+    /// creating RESULT matrix (AB-BA)
+    for (i = 0; i < n; i++)
+        for (k = 0; k < n; k++) {
+            AB = 0;
+            BA = 0;
+            for (j = 0; j < n; j++) {
+                AB += A[i][j] * B[j][k];
+                BA += B[i][j] * A[j][k];
             }
-            A[j] = value;
+            RESULT[i][k] = AB - BA;
         }
 
-    printf("Sorted array: ");
-    for(i=0; i<n-1; i++)
-        printf("%lld, ",A[i]);
-    printf("%lld.",A[i]);
-    printf("\n>---------------------------------------------------------------<\n");
+    /// print RESULT matrix
+    printf("AB-BA matrix is:\n");
+    for (i = 0; i < n; i++) {
+        for (k = 0; k < n; k++)
+            printf("%lf ", RESULT[i][k]);
+        printf("\n");
+    }
 
+
+    printf("\n>---------------------------------------------------------------<\n");
 }
+
 
 void continue_or_quit() {
     printf("Do you want to clear console and continue? (yes - 1, no - 0): ");
@@ -176,15 +172,14 @@ int main() {
     printf("└──────────────────────┘└──────────────────────┘\n");
     printf("┌──────────────────────┐┌──────────────────────┐\n");
     printf("|        Quit          ||           0          |\n");
-    printf("| Start first program  ||           1          |\n");
-    printf("| Start second program ||           2          |\n");
+    printf("|  Start the program   ||           1          |\n");
     printf("└──────────────────────┘└──────────────────────┘\n");
     printf("My choose is: ");
 
     while (!scanf("%d%c", &reaction, &expression) || expression != '\n' ||
-           (reaction != 0 && reaction != 1 && reaction != 2)) {
+           (reaction != 0 && reaction != 1)) {
         rewind(stdin);
-        printf("Error! Please, write '0', '1' or '2': ");
+        printf("Error! Please, write '0' or '1': ");
         fflush(stdin);
     }
     if (reaction == 0) {
@@ -192,12 +187,7 @@ int main() {
         Sleep(4000);
     }
     if (reaction == 1) {
-        counting();
-        continue_or_quit();
-        goto starting_menu;
-    }
-    if (reaction == 2) {
-        sorting();
+        counting_matrix();
         continue_or_quit();
         goto starting_menu;
     }
