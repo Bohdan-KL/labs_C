@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <time.h>
 
+
 void make_title() {
     system("cls||clear");
     printf("\n┌────────────────────────────────────────────────────────────────────────────────────────────────┐");
@@ -18,7 +19,7 @@ void make_title() {
 }
 
 
-double is_valid_input(char text[1000]) {
+double is_double_valid_input(char text[1000]) {
     double value;
     char expression;
     printf(text);
@@ -27,7 +28,18 @@ double is_valid_input(char text[1000]) {
         printf("Error! Please, write without mistakes: ");
         fflush(stdin);
     }
+    return value;
+}
 
+long long is_long_long_valid_input(char text[1000]) {
+    long long value;
+    char expression;
+    printf(text);
+    while (!scanf("%lld%c", &value, &expression) || expression != '\n') {
+        rewind(stdin);
+        printf("Error! Please, write without mistakes: ");
+        fflush(stdin);
+    }
     return value;
 }
 
@@ -68,7 +80,7 @@ void counting() {
     how_create_array = is_keyboard();
     if (how_create_array == 1) {
         for (i = 0; i < n; i++)
-            A[i] = is_valid_input("Write numeric: ");
+            A[i] = is_double_valid_input("Write numeric: ");
     }
     if (how_create_array == 0) {
         for (i = 0; i < n - 1; i++)
@@ -96,8 +108,41 @@ void counting() {
 
 
 void sorting() {
+    long long how_create_array, n, i, j, step, value, A[10005];
 
-    printf(">---------------------------------------------------------------<\n");
+    n = is_valid_dimensionality();
+    how_create_array = is_keyboard();
+    if (how_create_array == 1) {
+        for (i = 0; i < n; i++)
+            A[i] = is_long_long_valid_input("Write numeric: ");
+    }
+    if (how_create_array == 0) {
+        for (i = 0; i < n - 1; i++)
+            A[i] = (rand() % 101 - 50);
+        printf("Generated array: ");
+        for (i = 0; i < n - 1; i++)
+            printf("%lld, ", A[i]);
+        A[n - 1] = (rand() % 101 - 50);
+        printf("%lld.\n", A[n-1]);
+    }
+
+    for (step = n / 2; step > 0; step /= 2)
+        for (i = step; i < n; i++) {
+            value = A[i];
+            for (j = i; j >= step; j -= step) {
+                if (value < A[j - step])
+                    A[j] = A[j - step];
+                else
+                    break;
+            }
+            A[j] = value;
+        }
+
+    printf("Sorted array: ");
+    for(i=0; i<n-1; i++)
+        printf("%lld, ",A[i]);
+    printf("%lld.",A[i]);
+    printf("\n>---------------------------------------------------------------<\n");
 
 }
 
