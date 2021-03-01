@@ -1,21 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <time.h>
 
 
 void make_title() {
     system("cls||clear");
-    printf("\n┌────────────────────────────────────────────────────────────────────────────────────────────────┐");
-    printf("\n│                                    Laboratory work №2                                          │");
-    printf("\n│                                                                                                │");
-    printf("\n│ Theme: 'One-dimensional and two-dimensional arrays'                                            │");
-    printf("\n│                                                                                                │");
-    printf("\n│      Done by st. of gr. КМ-01                                         Klots B                  │");
-    printf("\n│                                                                                                │");
-    printf("\n│                                                                                                │");
-    printf("\n│                                              2020                                              │");
-    printf("\n└────────────────────────────────────────────────────────────────────────────────────────────────┘\n\n");
+    printf("Laboratory work №2\n");
+    printf("Theme: 'One-dimensional and two-dimensional arrays'\n");
+    printf("Done by st. of gr. КМ-01: Klots Bohdan\n\n");
 }
 
 
@@ -158,9 +150,9 @@ void continue_or_quit() {
     if (reaction == 1) system("cls");
 
     if (reaction == 0) {
-        printf("Good by!");
-        Sleep(4000);
-        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, 0); // close console
+        printf("Good by!\n");
+        system("pause");
+        exit(0);
     }
 
 }
@@ -188,8 +180,8 @@ int main() {
         fflush(stdin);
     }
     if (reaction == 0) {
-        printf("Good by!");
-        Sleep(4000);
+        printf("Good by!\n");
+        system("pause");
     }
     if (reaction == 1) {
         counting();
