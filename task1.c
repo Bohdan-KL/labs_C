@@ -1,141 +1,73 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-
+#include <string.h>
+#include <ctype.h>
 
 void make_title() {
     system("cls||clear");
-    printf("Laboratory work №2\n");
-    printf("Theme: 'One-dimensional and two-dimensional arrays'\n");
+    printf("Laboratory work №3\n");
+    printf("Theme: 'Symbolic data processing'\n");
     printf("Done by st. of gr. КМ-01: Klots Bohdan\n\n");
 }
 
 
-double is_double_valid_input(char text[1000]) {
-    double value;
-    char expression;
-    printf(text);
-    while (!scanf("%lf%c", &value, &expression) || expression != '\n') {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes: ");
-        fflush(stdin);
-    }
-    return value;
-}
+void sorting_sentence() {
+    char sentence[250];
+    int i, invalid;
 
-long long is_long_long_valid_input(char text[1000]) {
-    long long value;
-    char expression;
-    printf(text);
-    while (!scanf("%lld%c", &value, &expression) || expression != '\n') {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes: ");
-        fflush(stdin);
-    }
-    return value;
-}
-
-
-unsigned int is_valid_dimensionality() {
-    unsigned int dimensionality;
-    char expression;
-    printf("Write array dimensionality: ");
-    while (!scanf("%d%c", &dimensionality, &expression) || expression != '\n' || dimensionality < 0 ||
-           dimensionality > 10000) {
-        rewind(stdin);
-        printf("Error! Dimensionality should be from 1 to 10000\n");
-        printf("Please, write without mistakes: ");
-        fflush(stdin);
-    }
-    return dimensionality;
-}
-
-int is_keyboard() {
-    char expression;
-    int reaction;
-    printf("Create array(1 - from keyboard, 0 - auto): ");
-    while (!scanf("%d%c", &reaction, &expression) || expression != '\n' || (reaction != 0 && reaction != 1)) {
-        rewind(stdin);
-        printf("Error! Please, write without mistakes(1 - from keyboard, 0 - auto): ");
-        fflush(stdin);
-    }
-    return reaction;
-}
-
-
-void counting() {
-    unsigned int n, result = 0, pre_result = 0;
-    int how_create_array, i;
-    double A[10005];
-    srand(time(NULL));
-    n = is_valid_dimensionality();
-    how_create_array = is_keyboard();
-    if (how_create_array == 1) {
-        for (i = 0; i < n; i++)
-            A[i] = is_double_valid_input("Write numeric: ");
-    }
-    if (how_create_array == 0) {
-        for (i = 0; i < n - 1; i++)
-            A[i] = (rand() % 1001 - 500) / 10.0;
-        printf("Generated array: ");
-        for (i = 0; i < n - 1; i++)
-            printf("%f, ", A[i]);
-        A[n - 1] = (rand() % 1001 - 500) / 10.0;
-        printf("%f.\n", A[i]);
-    }
-
-    for (i = 0; i < n; i++) {
-        if (A[i] < 0) pre_result += 1;
-        if (A[i] >= 0 & pre_result != 0) {
-            if (pre_result > result)
-                result = pre_result;
-            pre_result = 0;
-        }
-    }
-
-
-    printf("\nThe maximum number of negative consecutive elements is: %d", result);
-    printf("\n>---------------------------------------------------------------<\n");
-}
-
-
-void sorting() {
-    long long how_create_array, n, i, j, step, value, A[10005];
-
-    n = is_valid_dimensionality();
-    how_create_array = is_keyboard();
-    if (how_create_array == 1) {
-        for (i = 0; i < n; i++)
-            A[i] = is_long_long_valid_input("Write numeric: ");
-    }
-    if (how_create_array == 0) {
-        for (i = 0; i < n - 1; i++)
-            A[i] = (rand() % 101 - 50);
-        printf("Generated array: ");
-        for (i = 0; i < n - 1; i++)
-            printf("%lld, ", A[i]);
-        A[n - 1] = (rand() % 101 - 50);
-        printf("%lld.\n", A[n-1]);
-    }
-
-    for (step = n / 2; step > 0; step /= 2)
-        for (i = step; i < n; i++) {
-            value = A[i];
-            for (j = i; j >= step; j -= step) {
-                if (value < A[j - step])
-                    A[j] = A[j - step];
-                else
-                    break;
+    /// Checking is valid sentence
+    while (1) {
+        printf("Write your sentence(english): ");
+        gets(sentence);
+        invalid = 0;
+        for (i = 0; sentence[i] != '\0'; i++) {
+            if ((isalpha(sentence[i]) == 0 && sentence[i] != ' ') || (sentence[i]==' ' && sentence[i+1]==' ')) {
+                if (sentence[i + 1] == '\0' &&
+                    (sentence[i] == '.' || sentence[i] == '!' || sentence[i] == '?' || sentence[i] == ';')) break;
+                invalid = 1;
+                printf("Error! Please, write words only from letters.\n");
+                break;
             }
-            A[j] = value;
         }
+        if (invalid == 0) break;
+    }
+    /// The end of checking
 
-    printf("Sorted array: ");
-    for(i=0; i<n-1; i++)
-        printf("%lld, ",A[i]);
-    printf("%lld.",A[i]);
+    /// Creating useful arrays
+    int sum_array[254], len_words[254], length, counter_letter=0, counter_word=0;
+    length = i;
+    sentence[i]=' ';
+    sum_array[0]=0;
+    len_words[0]=0;
+    for (i=0; i<=length; i++){
+        if (sentence[i]!=' '){
+            counter_letter+=1;
+        }
+        if (sentence[i]==' '){
+            counter_word+=1;
+            sum_array[counter_word]= sum_array[counter_word-1]+counter_letter+1;
+            len_words[counter_word-1]=counter_letter;
+            counter_letter=0;
+        }
+    }
+    /// The end of creating
+
+    /// Sorting and printing
+    int repeat = counter_word, remember = 0;
+    printf("Result is: ");
+    while (repeat!=0){
+        int min=260;
+        for(i=0; i<counter_word; i++){
+            if(min>len_words[i]) {
+                min = len_words[i];
+                remember = i;
+            }}
+        len_words[remember]=270;
+        for(i=sum_array[remember]; i<sum_array[remember]+min; i++) printf("%c",sentence[i]);
+        printf(" ");
+        repeat -=1;
+    }
     printf("\n>---------------------------------------------------------------<\n");
-
 }
 
 void continue_or_quit() {
@@ -169,14 +101,13 @@ int main() {
     printf("┌──────────────────────┐┌──────────────────────┐\n");
     printf("|        Quit          ||           0          |\n");
     printf("| Start first program  ||           1          |\n");
-    printf("| Start second program ||           2          |\n");
     printf("└──────────────────────┘└──────────────────────┘\n");
     printf("My choose is: ");
 
     while (!scanf("%d%c", &reaction, &expression) || expression != '\n' ||
-           (reaction != 0 && reaction != 1 && reaction != 2)) {
+           (reaction != 0 && reaction != 1)) {
         rewind(stdin);
-        printf("Error! Please, write '0', '1' or '2': ");
+        printf("Error! Please, write '0' or '1': ");
         fflush(stdin);
     }
     if (reaction == 0) {
@@ -184,12 +115,7 @@ int main() {
         system("pause");
     }
     if (reaction == 1) {
-        counting();
-        continue_or_quit();
-        goto starting_menu;
-    }
-    if (reaction == 2) {
-        sorting();
+        sorting_sentence();
         continue_or_quit();
         goto starting_menu;
     }
