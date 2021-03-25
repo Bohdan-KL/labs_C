@@ -68,6 +68,7 @@ void sorting_sentence() {
         repeat -=1;
     }
     printf("\n>---------------------------------------------------------------<\n");
+    /// The end of sorting and printing
 }
 
 void continue_or_quit() {
